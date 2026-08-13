@@ -22,12 +22,22 @@ spec:
           image: hodhan/yolo-frontend:v1.0.6
           ports:
             - containerPort: 80
+
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "200m"
+              memory: "128Mi"
+
           readinessProbe:
             httpGet:
               path: /
               port: 80
             initialDelaySeconds: 5
             periodSeconds: 5
+
           livenessProbe:
             httpGet:
               path: /
