@@ -7,6 +7,8 @@ metadata:
     component: backend
 spec:
   replicas: 2
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: yolo
@@ -22,14 +24,25 @@ spec:
           image: hodhan/yolo-backend:v1.0.0
           ports:
             - containerPort: 5000
+
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "200m"
+              memory: "128Mi"
+
           env:
             - name: MONGODB_URI
               value: "mongodb://mongodb:27017/yolomy"
+
           readinessProbe:
             tcpSocket:
               port: 5000
             initialDelaySeconds: 10
             periodSeconds: 5
+
           livenessProbe:
             tcpSocket:
               port: 5000
