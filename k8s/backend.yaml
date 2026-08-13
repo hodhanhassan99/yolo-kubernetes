@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: yolo
+    component: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: yolo
+      component: backend
+  template:
+    metadata:
+      labels:
+        app: yolo
+        component: backend
+    spec:
+      containers:
+        - name: backend
+          image: hodhan/yolo-backend:v1.0.0
+          ports:
+            - containerPort: 5000
+          env:
+            - name: MONGODB_URI
+              value: "mongodb://mongodb:27017/yolomy"
+          readinessProbe:
+            tcpSocket:
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: 5000
+            initialDelaySeconds: 20
+            periodSeconds: 10
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  labels:
+    app: yolo
+    component: backend
+spec:
+  type: ClusterIP
+  selector:
+    app: yolo
+    component: backend
+  ports:
+    - port: 5000
+      targetPort: 5000
